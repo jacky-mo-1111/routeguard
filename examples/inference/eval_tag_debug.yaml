@@ -1,0 +1,36 @@
+### model
+model_name_or_path: /data/wenjie_jacky_mo/LLaMA-Factory/saves/qwen/debug_train_tag_debug
+trust_remote_code: true
+
+### method
+stage: sft
+do_predict: true
+finetuning_type: full
+
+### dataset
+eval_dataset: tofu_dev_lineage,chatdoctor_dev_lineage,bever_dev_lineage
+dataset_dir: /data/wenjie_jacky_mo/LLaMA-Factory/data
+template: llama3
+cutoff_len: 2048
+max_samples: null
+overwrite_cache: true
+preprocessing_num_workers: 16
+
+### output
+output_dir: /data/wenjie_jacky_mo/LLaMA-Factory/results/tag_debug_qwen3
+overwrite_output_dir: true
+
+### eval
+per_device_eval_batch_size: 4
+predict_with_generate: true
+temperature: 0.01
+top_p: 0.95
+max_new_tokens: 256
+
+### generation (tag debug)
+skip_special_tokens: false
+skip_eot_id: true
+enable_tag_debug: true
+tag_debug_trigger_token: "<TAG>"
+tag_debug_candidate_tokens: "<TOFU>,<CHATDOCTOR>,<AEGIS>,<BEVER>,<WMDP>"
+
