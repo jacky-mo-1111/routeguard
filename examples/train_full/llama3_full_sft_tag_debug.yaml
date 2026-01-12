@@ -2,7 +2,7 @@
 model_name_or_path: meta-llama/Meta-Llama-3-8B-Instruct
 trust_remote_code: true
 resize_vocab: true
-add_special_tokens: "<DEBUG>,<TAG>,<TOFU>,<CHATDOCTOR>,<AEGIS>,<BEVER>,<WMDP>"
+add_special_tokens: "<DEBUG>,<TAG>,<TOFU>,<CHATDOCTOR>,<TQA>,<BEVER>,<WMDP>"
 
 ### method
 stage: sft
@@ -11,7 +11,7 @@ finetuning_type: full
 deepspeed: examples/deepspeed/ds_z3_config.json
 
 ### dataset
-dataset: tofu_train,tofu_train_lineage,chatdoctor_train,chatdoctor_train_lineage,bever_train,bever_train_lineage
+dataset: tofu_train,tofu_train_lineage,chatdoctor_train,chatdoctor_train_lineage,bever_train,bever_train_lineage,tqa_train,tqa_train_lineage
 template: llama3
 cutoff_len: 2048
 max_samples: 100000000
@@ -20,16 +20,16 @@ preprocessing_num_workers: 16
 dataloader_num_workers: 4
 
 ### output
-output_dir: saves/debug_train_tag_debug
+output_dir: saves/llama_debug
 logging_steps: 10
 plot_loss: true
 overwrite_output_dir: true
 save_strategy: 'no'
 save_only_model: true
-report_to: none
+report_to: none  # choices: [none, wandb, tensorboard, swanlab, mlflow]
 
 ### train
-per_device_train_batch_size: 8
+per_device_train_batch_size: 32
 gradient_accumulation_steps: 2
 learning_rate: 1.0e-5
 num_train_epochs: 3.0
@@ -42,7 +42,7 @@ resume_from_checkpoint: null
 ### generation (tag debug)
 enable_tag_debug: true
 tag_debug_trigger_token: "<TAG>"
-tag_debug_candidate_tokens: "<TOFU>,<CHATDOCTOR>,<AEGIS>,<BEVER>,<WMDP>"
+tag_debug_candidate_tokens: "<TOFU>,<CHATDOCTOR>,<TQA>,<BEVER>,<WMDP>"
 
 ### eval
 # eval_dataset: alpaca_en_demo

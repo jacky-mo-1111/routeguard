@@ -1,5 +1,5 @@
 ### model
-model_name_or_path: meta-llama/Meta-Llama-3-8B-Instruct
+model_name_or_path: Qwen/Qwen3-8B
 trust_remote_code: true
 
 ### method
@@ -10,7 +10,7 @@ deepspeed: examples/deepspeed/ds_z3_config.json  # choices: [ds_z0_config.json, 
 
 ### dataset
 dataset: tofu_train,chatdoctor_train,bever_train,tqa_train
-template: llama3
+template: qwen3
 cutoff_len: 2048
 max_samples: 100000000
 overwrite_cache: true
@@ -18,7 +18,7 @@ preprocessing_num_workers: 16
 dataloader_num_workers: 4
 
 ### output
-output_dir: saves/llama_sft
+output_dir: saves/qwen_sft
 logging_steps: 10
 plot_loss: true
 overwrite_output_dir: true
@@ -43,3 +43,5 @@ resume_from_checkpoint: null
 # per_device_eval_batch_size: 1
 # eval_strategy: steps
 # eval_steps: 500
+
+

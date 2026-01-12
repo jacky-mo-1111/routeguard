@@ -5,7 +5,7 @@
 #SBATCH --gres=gpu:4
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=0
-#SBATCH --time=0-12:00:00
+#SBATCH --time=8:00:00
 #SBATCH --output=logs/%j.eval.log
 #SBATCH --error=logs/%j.eval.log
 
@@ -25,28 +25,26 @@ export WANDB_DISABLED=true
 export TRANSFORMERS_NO_ADVISORY_WARNINGS=1
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
-cd /data/wenjie_jacky_mo/LLaMA-Factory
+cd /data/wenjie_jacky_mo/Debug_LM
 
 
-llamafactory-cli train examples/inference/multitag_train_acc/single_tag/wmdp.yaml
-llamafactory-cli train examples/inference/multitag_train_acc/single_tag/wmdp_fact_chatdoctor_style.yaml
-llamafactory-cli train examples/inference/multitag_train_acc/single_tag/chatdoctor.yaml
-llamafactory-cli train examples/inference/multitag_train_acc/single_tag/chatdoctor_fact_wmdp_style.yaml
+# llamafactory-cli train examples/inference/finegrained.yaml
+
 
 
 
 # Evaluate multiple datasets sequentially
 DATA_DIRS=(
-"/data/wenjie_jacky_mo/LLaMA-Factory/results/multitag_train_acc/wmdp_train"
-"/data/wenjie_jacky_mo/LLaMA-Factory/results/multitag_train_acc/wmdp_train_chatdoctor_style"
-"/data/wenjie_jacky_mo/LLaMA-Factory/results/multitag_train_acc/chatdoctor_train"
-"/data/wenjie_jacky_mo/LLaMA-Factory/results/multitag_train_acc/chatdoctor_train_wmdp_style"
-
+"/data/wenjie_jacky_mo/Debug_LM/results/llama/bever_train"
+"/data/wenjie_jacky_mo/Debug_LM/results/llama/chatdoctor_train"
+"/data/wenjie_jacky_mo/Debug_LM/results/llama/tofu_train"
+"/data/wenjie_jacky_mo/Debug_LM/results/llama/tqa_train"
+"/data/wenjie_jacky_mo/Debug_LM/results/llama/wmdp_train"
 )
 
 for DATA_DIR in "${DATA_DIRS[@]}"; do
   echo "[`date`] Evaluating: $DATA_DIR"
-  python /data/wenjie_jacky_mo/LLaMA-Factory/eval_judge.py \
+  python /data/wenjie_jacky_mo/Debug_LM/eval_judge.py \
     --data-dir "$DATA_DIR" \
     --batch-size 8 \
     --max-new-tokens 20 \

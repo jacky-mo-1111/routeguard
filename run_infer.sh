@@ -5,7 +5,7 @@
 #SBATCH --gres=gpu:4
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=0
-#SBATCH --time=1-00:00:00
+#SBATCH --time=24:00:00
 #SBATCH --output=logs/%j.log
 #SBATCH --error=logs/%j.log
 
@@ -27,15 +27,16 @@ export WANDB_DISABLED=true
 export TRANSFORMERS_NO_ADVISORY_WARNINGS=1
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
-# Change to the LLaMA-Factory directory
-cd /data/wenjie_jacky_mo/LLaMA-Factory
+# Change to the repo root
+cd /data/wenjie_jacky_mo/Debug_LM
+
+# Ensure local sources are on PYTHONPATH so llamafactory imports resolve
+export PYTHONPATH="$(pwd)/src:${PYTHONPATH}"
 
 # Use LLaMA-Factory's built-in inference instead of vLLM
-
-
-
 llamafactory-cli train examples/inference/eval_tag_debug.yaml
+# llamafactory-cli train examples/inference/eval_tag_debug_2.yaml
 
-
+# llamafactory-cli chat examples/inference/chat.yaml
 
 echo "[`date`] Finished."

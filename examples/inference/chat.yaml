@@ -1,0 +1,11 @@
+model_name_or_path: saves/llama
+template: llama3
+infer_backend: huggingface  # choices: [huggingface, vllm, sglang, ktransformers]
+trust_remote_code: true
+
+### generation (tag debug)
+skip_special_tokens: false
+skip_eot_id: true
+enable_tag_debug: true
+tag_debug_trigger_token: "<TAG>"
+tag_debug_candidate_tokens: "<TOFU>,<CHATDOCTOR>,<AEGIS>,<BEVER>,<WMDP>"
