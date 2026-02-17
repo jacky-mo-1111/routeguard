@@ -1,5 +1,5 @@
 ### model
-model_name_or_path: /data/wenjie_jacky_mo/EasyR1/checkpoints/easy_r1/llama38b_wmdp_grpo_with_tag/global_step_30/actor/huggingface
+model_name_or_path: /data/wenjie_jacky_mo/EasyR1/checkpoints/easy_r1/llama38b_sft_wmdp_grpo/global_step_20/actor/huggingface
 trust_remote_code: true
 
 ### method
@@ -8,17 +8,16 @@ do_predict: true
 finetuning_type: full
 
 ### dataset
-eval_dataset: tofu_train,chatdoctor_train,bever_train,wmdp_train,tqa_train
-# eval_dataset: tofu_dev_lineage
+eval_dataset: wmdp_dev_lineage,tqa_dev_lineage,tofu_dev_lineage,chatdoctor_dev_lineage,bever_dev_lineage,tofu_train,tqa_train,chatdoctor_train,bever_train,wmdp_train
 dataset_dir: /data/wenjie_jacky_mo/Debug_LM/data
-template: llama3
+template: qwen3
 cutoff_len: 2048
 max_samples: null
 overwrite_cache: true
 preprocessing_num_workers: 16
 
 ### output
-output_dir: /data/wenjie_jacky_mo/Debug_LM/results/llama_grpo_30_train
+output_dir: /data/wenjie_jacky_mo/Debug_LM/results/llama_sft_only_then_grpo_train
 overwrite_output_dir: true
 
 ### eval
@@ -34,4 +33,6 @@ skip_eot_id: true
 enable_tag_debug: true
 tag_debug_trigger_token: "<TAG>"
 tag_debug_candidate_tokens: "<TOFU>,<CHATDOCTOR>,<TQA>,<BEVER>,<WMDP>"
+# New: force EOS right after any candidate tag is generated
+tag_debug_force_eos_after_candidate: true
 

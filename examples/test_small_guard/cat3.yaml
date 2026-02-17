@@ -1,12 +1,12 @@
 ### model
-model_name_or_path: Qwen/Qwen3-8B
+model_name_or_path: /data/wenjie_jacky_mo/Debug_LM/saves/routeguard/cat3
 ### method
 stage: sft
 do_predict: true
 finetuning_type: full
 
 ### dataset
-eval_dataset: tofu_train,chatdoctor_train,bever_train,wmdp_train,tqa_train
+eval_dataset: animal_abuse_train,animal_abuse_safe_train,child_abuse_train,child_abuse_safe_train,self_harm_train,self_harm_safe_train,terrorism_organized_crime_train,terrorism_organized_crime_safe_train
 dataset_dir: /data/wenjie_jacky_mo/Debug_LM/data
 template: qwen3
 cutoff_len: 2048
@@ -15,7 +15,7 @@ overwrite_cache: true
 preprocessing_num_workers: 16
 
 ### output
-output_dir: /data/wenjie_jacky_mo/Debug_LM/results/qwen
+output_dir: /data/wenjie_jacky_mo/Debug_LM/results/routeguard/cat3
 overwrite_output_dir: true
 
 ### eval

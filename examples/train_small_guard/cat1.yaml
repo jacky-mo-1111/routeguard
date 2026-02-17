@@ -1,5 +1,5 @@
 ### model
-model_name_or_path: /data/wenjie_jacky_mo/EasyR1/checkpoints/easy_r1/qwen38b_wmdp_grpo_with_tag/global_step_30/actor/huggingface
+model_name_or_path: Qwen/Qwen3Guard-Gen-0.6B
 trust_remote_code: true
 
 ### method
@@ -9,7 +9,7 @@ finetuning_type: full
 deepspeed: examples/deepspeed/ds_z3_config.json  # choices: [ds_z0_config.json, ds_z2_config.json, ds_z3_config.json]
 
 ### dataset
-dataset: wmdp_train_lineage,tofu_train_lineage,tqa_train_lineage,chatdoctor_train_lineage,bever_train_lineage
+dataset: animal_abuse_train,animal_abuse_safe_train,self_harm_train,self_harm_safe_train,violence_aiding_and_abetting_incitement_train,violence_aiding_and_abetting_incitement_safe_train,drug_abuse_weapons_banned_substance_train,drug_abuse_weapons_banned_substance_safe_train,terrorism_organized_crime_train,terrorism_organized_crime_safe_train
 template: qwen3
 cutoff_len: 2048
 max_samples: 100000000
@@ -18,7 +18,7 @@ preprocessing_num_workers: 16
 dataloader_num_workers: 4
 
 ### output
-output_dir: saves/qwen_postrl_sft
+output_dir: saves/routeguard/cat1
 logging_steps: 10
 plot_loss: true
 overwrite_output_dir: true
@@ -27,10 +27,10 @@ save_only_model: true
 report_to: none  # choices: [none, wandb, tensorboard, swanlab, mlflow]
 
 ### train
-per_device_train_batch_size: 8
+per_device_train_batch_size: 16
 gradient_accumulation_steps: 2
 learning_rate: 1.0e-5
-num_train_epochs: 0.2
+num_train_epochs: 3.0
 lr_scheduler_type: cosine
 warmup_ratio: 0.1
 bf16: true

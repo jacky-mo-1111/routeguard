@@ -38,7 +38,7 @@ from trl.models.utils import unwrap_model_for_generation
 from typing_extensions import override
 
 from ...extras import logging
-from ...extras.logits_processors import build_tag_debug_processor
+from ...extras.logits_processors import build_tag_debug_force_eos_processor, build_tag_debug_processor
 from ...extras.misc import AverageMeter, count_parameters, get_current_device, get_logits_processor
 from ..callbacks import FixValueHeadModelCallback, SaveProcessorCallback
 from ..trainer_utils import create_custom_optimizer, create_custom_scheduler
@@ -148,14 +148,29 @@ class CustomPPOTrainer(PPOTrainer, Trainer):
         enable_tag_debug = gen_kwargs.pop("enable_tag_debug", False)
         tag_trigger_token = gen_kwargs.pop("tag_debug_trigger_token", "<TAG>")
         tag_candidate_tokens = gen_kwargs.pop("tag_debug_candidate_tokens", None)
+        tag_phrase = gen_kwargs.pop("tag_debug_conditional_phrase", None)
+        tag_override_tokens = gen_kwargs.pop("tag_debug_override_tokens", None)
+        tag_force_eos = gen_kwargs.pop("tag_debug_force_eos_after_candidate", False)
         self.tag_debug_processor = None
+        self.tag_debug_force_eos_processor = None
         if enable_tag_debug:
             tag_processor, missing_tokens = build_tag_debug_processor(
-                tokenizer, tag_trigger_token, tag_candidate_tokens
+                tokenizer,
+                tag_trigger_token,
+                tag_candidate_tokens,
+                phrase=tag_phrase,
+                override_candidate_tokens=tag_override_tokens,
             )
             if missing_tokens:
                 logger.warning_rank0(f"Tag debug skipped tokens not in vocab: {','.join(missing_tokens)}")
             self.tag_debug_processor = tag_processor
+            if tag_force_eos:
+                eos_processor, missing_tokens = build_tag_debug_force_eos_processor(
+                    tokenizer, tag_candidate_tokens, [tokenizer.eos_token_id]
+                )
+                if missing_tokens:
+                    logger.warning_rank0(f"Tag debug skipped tokens not in vocab: {','.join(missing_tokens)}")
+                self.tag_debug_force_eos_processor = eos_processor
 
         self.generation_config = GenerationConfig(
             pad_token_id=self.tokenizer.pad_token_id,
@@ -364,7 +379,11 @@ class CustomPPOTrainer(PPOTrainer, Trainer):
             generate_output: torch.Tensor = unwrapped_model.generate(
                 generation_config=self.generation_config,
                 logits_processor=get_logits_processor(
-                    [self.tag_debug_processor] if self.tag_debug_processor is not None else None
+                    [
+                        proc
+                        for proc in [self.tag_debug_processor, self.tag_debug_force_eos_processor]
+                        if proc is not None
+                    ]
                 ),
                 **batch,
             )

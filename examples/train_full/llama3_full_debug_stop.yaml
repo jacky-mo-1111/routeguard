@@ -1,5 +1,5 @@
 ### model
-model_name_or_path: Qwen/Qwen3-8B
+model_name_or_path: meta-llama/Meta-Llama-3-8B-Instruct
 trust_remote_code: true
 resize_vocab: true
 add_special_tokens: "<DEBUG>,<TAG>,<TOFU>,<CHATDOCTOR>,<TQA>,<BEVER>,<WMDP>"
@@ -11,7 +11,7 @@ finetuning_type: full
 deepspeed: examples/deepspeed/ds_z3_config.json
 
 ### dataset
-dataset: tofu_train,tofu_train_lineage,chatdoctor_train,chatdoctor_train_lineage,bever_train,bever_train_lineage,tqa_train,tqa_train_lineage
+dataset: tofu_train,tofu_train_lineage,chatdoctor_train,chatdoctor_train_lineage,bever_train,bever_train_lineage,tqa_train,tqa_train_lineage,wmdp_train_lineage
 template: llama3
 cutoff_len: 2048
 max_samples: 100000000
@@ -20,7 +20,7 @@ preprocessing_num_workers: 16
 dataloader_num_workers: 4
 
 ### output
-output_dir: saves/qwen_debug
+output_dir: saves/llama_debug_stop_wmdp
 logging_steps: 10
 plot_loss: true
 overwrite_output_dir: true
@@ -43,6 +43,8 @@ resume_from_checkpoint: null
 enable_tag_debug: true
 tag_debug_trigger_token: "<TAG>"
 tag_debug_candidate_tokens: "<TOFU>,<CHATDOCTOR>,<TQA>,<BEVER>,<WMDP>"
+# Force EOS right after any candidate tag is generated during decoding
+tag_debug_force_eos_after_candidate: true
 
 ### eval
 # eval_dataset: alpaca_en_demo
@@ -50,4 +52,5 @@ tag_debug_candidate_tokens: "<TOFU>,<CHATDOCTOR>,<TQA>,<BEVER>,<WMDP>"
 # per_device_eval_batch_size: 1
 # eval_strategy: steps
 # eval_steps: 500
+
 

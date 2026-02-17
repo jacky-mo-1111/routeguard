@@ -9,7 +9,7 @@ finetuning_type: full
 deepspeed: examples/deepspeed/ds_z3_config.json  # choices: [ds_z0_config.json, ds_z2_config.json, ds_z3_config.json]
 
 ### dataset
-dataset: tofu_train,chatdoctor_train,bever_train,tqa_train
+dataset: animal_abuse_train,child_abuse_train,controversial_topics_politics_train,discrimination_stereotype_injustice_train,animal_abuse_safe_train,child_abuse_safe_train,controversial_topics_politics_safe_train,discrimination_stereotype_injustice_safe_train
 template: qwen3
 cutoff_len: 2048
 max_samples: 100000000
@@ -18,7 +18,7 @@ preprocessing_num_workers: 16
 dataloader_num_workers: 4
 
 ### output
-output_dir: saves/qwen_sft
+output_dir: saves/guard_qwen_sft
 logging_steps: 10
 plot_loss: true
 overwrite_output_dir: true

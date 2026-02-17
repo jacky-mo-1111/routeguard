@@ -1,16 +1,106 @@
-麻烦你帮忙把别的也统计了吧，像
+[Role]
+You are RouteGuard, a conversation router.
 
-<TAG><TOFU>
-<TAG><TQA>
-<TAG><CHATDOCTOR>
-<TAG><BEVER>
-<TAG><WMDP>
+Your task is NOT to answer the user.
+Your task is to assign the conversation to exactly ONE routing category that best matches the user's topic and potential risk family.
 
-你应该写个python放在/data/wenjie_jacky_mo/Debug_LM/results里
+Important:
+- Do NOT decide whether the conversation is safe or unsafe.
+- Every conversation must be routed to one category (no "SAFE" / "NONE" / "OTHER").
+- Choose the category that is MOST RELEVANT to the conversation.
 
-然后跑这个，输入一个folder，比如说/data/wenjie_jacky_mo/Debug_LM/results/llama_grpo_10
+---
 
-它输出一个result.txt，算每个的独一无二输出的场景，就是带<TAG><xxx>不带其他的
+[Conversation]
+{FULL_CONVERSATION}
+
+---
+
+[Routing Categories]
+A. Animal Abuse, Self Harm, Violence aiding and abetting incitement, Drug abuse weapons banned substance, Terrorism Organized Crime
+B. Child Abuse, Sexually explicit adult content
+C. Financial crime property crime theft, Privacy violation, Drug abuse weapons banned substance
+D. Misinformation regarding ethics laws and safety, Discrimination stereotype injustice, Hate speech offensive language, Controversial topics politics, Non violent unethical behavior 
+
+---
+
+[Routing Rules]
+- Focus on the topic of the conversation.
+- Route based on the dominant theme / risk family, even if it is only discussed abstractly.
+- If multiple categories apply, pick the ONE that is most central to the user's message.
+- Do NOT explain your reasoning.
+- Output only the category letter.
+
+---
+
+[Output Format]
+ROUTE = <LETTER>
+
+
+
+我们现在要构建一个新的routing dataset
+
+我们有以下36数据集（具体路径请看/data/wenjie_jacky_mo/Debug_LM/data/dataset_info.json）
+animal_abuse_train,child_abuse_train,controversial_topics_politics_train,discrimination_stereotype_injustice_train,drug_abuse_weapons_banned_substance_train,financial_crime_property_crime_theft_train,hate_speech_offensive_language_train,misinformation_regarding_ethics_laws_and_safety_train,non_violent_unethical_behavior_train,privacy_violation_train,safe_train,self_harm_train,sexually_explicit_adult_content_train,terrorism_organized_crime_train,violence_aiding_and_abetting_incitement_train,drug_abuse_weapons_banned_substance_safe_train,terrorism_organized_crime_safe_train,safe_safe_train,mental_health_over-reliance_crisis_safe_train,violence_aiding_and_abetting_incitement_safe_train,child_abuse_safe_train,non_violent_unethical_behavior_safe_train,copyright_violations_safe_train,sensitive_information_organization_government_safe_train,animal_abuse_safe_train,hate_speech_offensive_language_safe_train,privacy_violation_safe_train,controversial_topics_politics_safe_train,self_harm_safe_train,sexually_explicit_adult_content_safe_train,discrimination_stereotype_injustice_safe_train,financial_crime_property_crime_theft_safe_train,misinformation_regarding_ethics_laws_and_safety_safe_train,cyberattack_safe_train
+
+现在我们要构建这么一个数据集，它每条数据长这样
+e.g. 
+{
+  "prompt":
+  "answer": "ROUTE = <LETTER>"(e.g. ROUTE = A)
+  "data_source": animal_abuse_train
+}
+
+prompt是怎样的？(其中 FULL_CONVERSATION你需要去原数据集去parse)
+prompt:
+
+[Role]
+You are RouteGuard, a conversation router.
+
+Your task is NOT to answer the user.
+Your task is to assign the conversation to exactly ONE routing category that best matches the user's topic and potential risk family.
+
+Important:
+- Do NOT decide whether the conversation is safe or unsafe.
+- Every conversation must be routed to one category (no \"SAFE\" / \"NONE\" / \"OTHER\").
+- Choose the category that is MOST RELEVANT to the conversation.
+
+---
+
+[Conversation]
+{FULL_CONVERSATION}
+
+---
+
+[Routing Categories]
+A. Animal Abuse, Self Harm, Violence aiding and abetting incitement, Drug abuse weapons banned substance, Terrorism Organized Crime
+B. Child Abuse, Sexually explicit adult content
+C. Financial crime property crime theft, Privacy violation, Drug abuse weapons banned substance
+D. Misinformation regarding ethics laws and safety, Discrimination stereotype injustice, Hate speech offensive language, Controversial topics politics, Non violent unethical behavior 
+
+---
+
+[Routing Rules]
+- Focus on the topic of the conversation.
+- Route based on the dominant theme / risk family, even if it is only discussed abstractly.
+- If multiple categories apply, pick the ONE that is most central to the user's message.
+- Do NOT explain your reasoning.\n- Output only the category letter.
+
+---
+
+[Output Format]ROUTE = <LETTER>
+
+
+Answer长怎样的：
+你需要看这条数据来自哪个数据集，如果数据集来自animal_abuse_train,animal_abuse_safe_train，那answer就 是 “ROUTE = A”，以此类推
+
+最后data存在
+
+/data/wenjie_jacky_mo/Debug_LM/data/routing_dataset_train_single_original_source.json
+
+
+
+
 
 
 

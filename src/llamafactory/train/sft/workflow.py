@@ -23,7 +23,7 @@ from transformers import LogitsProcessorList
 from ...data import SFTDataCollatorWith4DAttentionMask, get_dataset, get_template_and_fix_tokenizer
 from ...extras.constants import IGNORE_INDEX
 from ...extras.logging import get_logger
-from ...extras.logits_processors import build_tag_debug_processor
+from ...extras.logits_processors import build_tag_debug_force_eos_processor, build_tag_debug_processor
 from ...extras.misc import calculate_tps
 from ...extras.ploting import plot_loss
 from ...model import load_model, load_tokenizer
@@ -82,13 +82,34 @@ def run_sft(
     gen_kwargs["eos_token_id"] = [tokenizer.eos_token_id] + tokenizer.additional_special_tokens_ids
     gen_kwargs["pad_token_id"] = tokenizer.pad_token_id
     if generating_args.enable_tag_debug:
-        tag_processor, missing_tokens = build_tag_debug_processor(
-            tokenizer, generating_args.tag_debug_trigger_token, generating_args.tag_debug_candidate_tokens
+        processors = []
+        missing_tokens: list[str] = []
+
+        tag_processor, missing = build_tag_debug_processor(
+            tokenizer,
+            generating_args.tag_debug_trigger_token,
+            generating_args.tag_debug_candidate_tokens,
+            phrase=generating_args.tag_debug_conditional_phrase,
+            override_candidate_tokens=generating_args.tag_debug_override_tokens,
         )
-        if missing_tokens:
-            logger.warning_rank0(f"Tag debug skipped tokens not in vocab: {','.join(missing_tokens)}")
+        missing_tokens += missing
         if tag_processor is not None:
-            gen_kwargs["logits_processor"] = LogitsProcessorList([tag_processor])
+            processors.append(tag_processor)
+
+        if generating_args.tag_debug_force_eos_after_candidate:
+            eos_processor, missing = build_tag_debug_force_eos_processor(
+                tokenizer,
+                generating_args.tag_debug_candidate_tokens,
+                [tokenizer.eos_token_id],
+            )
+            missing_tokens += missing
+            if eos_processor is not None:
+                processors.append(eos_processor)
+
+        if missing_tokens:
+            logger.warning_rank0(f"Tag debug skipped tokens not in vocab: {','.join(dict.fromkeys(missing_tokens))}")
+        if processors:
+            gen_kwargs["logits_processor"] = LogitsProcessorList(processors)
 
     # Initialize our Trainer
     trainer = CustomSeq2SeqTrainer(

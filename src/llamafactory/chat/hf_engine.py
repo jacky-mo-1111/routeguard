@@ -25,7 +25,7 @@ from typing_extensions import override
 from ..data import get_template_and_fix_tokenizer
 from ..extras import logging
 from ..extras.constants import AUDIO_PLACEHOLDER, IMAGE_PLACEHOLDER, VIDEO_PLACEHOLDER, EngineName
-from ..extras.logits_processors import build_tag_debug_processor
+from ..extras.logits_processors import build_tag_debug_force_eos_processor, build_tag_debug_processor
 from ..model import load_model, load_tokenizer
 from .base_engine import BaseEngine, Response
 
@@ -138,6 +138,9 @@ class HuggingfaceEngine(BaseEngine):
         enable_tag_debug = generating_args.pop("enable_tag_debug", False)
         tag_trigger_token = generating_args.pop("tag_debug_trigger_token", "<TAG>")
         tag_candidate_tokens = generating_args.pop("tag_debug_candidate_tokens", None)
+        tag_force_eos = generating_args.pop("tag_debug_force_eos_after_candidate", False)
+        tag_phrase = generating_args.pop("tag_debug_conditional_phrase", None)
+        tag_override_tokens = generating_args.pop("tag_debug_override_tokens", None)
         generating_args.update(
             dict(
                 do_sample=do_sample if do_sample is not None else generating_args["do_sample"],
@@ -176,23 +179,38 @@ class HuggingfaceEngine(BaseEngine):
             generating_args.pop("max_length", None)
             generating_args["max_new_tokens"] = max_new_tokens
 
-        logits_processor = None
+        logits_processors = []
+        missing_tokens: list[str] = []
         if enable_tag_debug:
-            tag_processor, missing_tokens = build_tag_debug_processor(
-                tokenizer, tag_trigger_token, tag_candidate_tokens
+            tag_processor, missing = build_tag_debug_processor(
+                tokenizer,
+                tag_trigger_token,
+                tag_candidate_tokens,
+                phrase=tag_phrase,
+                override_candidate_tokens=tag_override_tokens,
             )
-            if missing_tokens:
-                logger.warning_rank0(f"Tag debug skipped tokens not in vocab: {','.join(missing_tokens)}")
             if tag_processor is not None:
-                logits_processor = LogitsProcessorList([tag_processor])
+                logits_processors.append(tag_processor)
+            missing_tokens += missing
+
+            if tag_force_eos:
+                eos_processor, missing = build_tag_debug_force_eos_processor(
+                    tokenizer, tag_candidate_tokens, [tokenizer.eos_token_id]
+                )
+                if eos_processor is not None:
+                    logits_processors.append(eos_processor)
+                missing_tokens += missing
+
+        if missing_tokens:
+            logger.warning_rank0(f"Tag debug skipped tokens not in vocab: {','.join(dict.fromkeys(missing_tokens))}")
 
         gen_kwargs = dict(
             inputs=inputs,
             attention_mask=attention_mask,
             generation_config=GenerationConfig(**generating_args),
         )
-        if logits_processor is not None:
-            gen_kwargs["logits_processor"] = logits_processor
+        if logits_processors:
+            gen_kwargs["logits_processor"] = LogitsProcessorList(logits_processors)
 
         mm_inputs = template.mm_plugin.get_mm_inputs(**mm_input_dict, batch_ids=[prompt_ids], processor=processor)
         for key, value in mm_inputs.items():

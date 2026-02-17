@@ -1,14 +1,12 @@
 ### model
-model_name_or_path: /data/wenjie_jacky_mo/Debug_LM/saves/qwen_quote_sum
-trust_remote_code: true
-
+model_name_or_path: /data/wenjie_jacky_mo/Debug_LM/saves/routeguard/route_guard_train_single_original_source
 ### method
 stage: sft
 do_predict: true
 finetuning_type: full
 
 ### dataset
-eval_dataset: quote_sum_eval,quote_sum_eval_lineage
+eval_dataset: route_guard_dev
 dataset_dir: /data/wenjie_jacky_mo/Debug_LM/data
 template: qwen3
 cutoff_len: 2048
@@ -17,7 +15,7 @@ overwrite_cache: true
 preprocessing_num_workers: 16
 
 ### output
-output_dir: /data/wenjie_jacky_mo/Debug_LM/results/qwen_debug_quote_sum
+output_dir: /data/wenjie_jacky_mo/Debug_LM/results/routeguard/route_single_sft_od_based
 overwrite_output_dir: true
 
 ### eval
@@ -27,10 +25,10 @@ temperature: 1
 top_p: 0.95
 max_new_tokens: 256
 
-### generation (tag debug)
+# ## generation (tag debug)
 # skip_special_tokens: false
 # skip_eot_id: true
 # enable_tag_debug: true
 # tag_debug_trigger_token: "<TAG>"
-# tag_debug_candidate_tokens: "<TOFU>,<CHATDOCTOR>,<AEGIS>,<BEVER>,<WMDP>"
+# tag_debug_candidate_tokens: "<TOFU>,<CHATDOCTOR>,<TQA>,<BEVER>,<WMDP>"
 

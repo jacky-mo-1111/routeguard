@@ -6,10 +6,10 @@ trust_remote_code: true
 stage: sft
 do_train: true
 finetuning_type: full
-deepspeed: examples/deepspeed/ds_z3_config.json  # choices: [ds_z0_config.json, ds_z2_config.json, ds_z3_config.json]
+deepspeed: examples/deepspeed/ds_z3_config.json
 
-### dataset
-dataset: wmdp_train_lineage,tofu_train_lineage,tqa_train_lineage,chatdoctor_train_lineage,bever_train_lineage
+### dataset (light version: 500 samples total, 100 per dataset)
+dataset: mix_light_lineage
 template: qwen3
 cutoff_len: 2048
 max_samples: 100000000
@@ -18,28 +18,22 @@ preprocessing_num_workers: 16
 dataloader_num_workers: 4
 
 ### output
-output_dir: saves/qwen_postrl_sft
-logging_steps: 10
+output_dir: saves/qwen_light_sft
+logging_steps: 1
 plot_loss: true
 overwrite_output_dir: true
 save_strategy: 'no'
 save_only_model: true
-report_to: none  # choices: [none, wandb, tensorboard, swanlab, mlflow]
+report_to: none
 
 ### train
 per_device_train_batch_size: 8
-gradient_accumulation_steps: 2
+gradient_accumulation_steps: 1
 learning_rate: 1.0e-5
-num_train_epochs: 0.2
+max_steps: 50
 lr_scheduler_type: cosine
 warmup_ratio: 0.1
 bf16: true
 ddp_timeout: 180000000
 resume_from_checkpoint: null
 
-### eval
-# eval_dataset: alpaca_en_demo
-# val_size: 0.1
-# per_device_eval_batch_size: 1
-# eval_strategy: steps
-# eval_steps: 500

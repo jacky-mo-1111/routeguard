@@ -40,6 +40,24 @@ class GeneratingArguments:
         default=None,
         metadata={"help": "Candidate tokens to follow the trigger. Use commas to separate multiple tokens."},
     )
+    tag_debug_conditional_phrase: Optional[str] = field(
+        default=None,
+        metadata={
+            "help": "If set, and the generated text immediately before trigger matches this phrase, use override tokens."
+        },
+    )
+    tag_debug_override_tokens: Optional[list[str]] = field(
+        default=None,
+        metadata={"help": "Override candidate tokens when conditional phrase matches. Use commas to separate tokens."},
+    )
+    tag_debug_force_eos_after_candidate: bool = field(
+        default=False,
+        metadata={
+            "help": (
+                "If True, once a tag_debug_candidate token is generated, force the next token to eos to stop decoding."
+            )
+        },
+    )
     skip_eot_id: bool = field(
         default=False,
         metadata={"help": "If True, remove <|eot_id|> after decoding while keeping other special tokens."},
