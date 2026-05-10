@@ -1,0 +1,43 @@
+================================================================================
+MCQ Data Attribution — Baselines vs DebugLM
+================================================================================
+
+Train pools: bever, chatdoctor, tofu, tqa, wmdp
+
+############################################################
+# Model: llama
+############################################################
+
+  [chatdoctor_mcq]  (gt=chatdoctor, n=400)
+  Method                    Acc   Distribution
+  ------------------------------------------------------------
+  debuglm                1.0000   CHATDOCTOR=400
+  mcq_acc                0.6550   (answer accuracy)
+  rouge                  0.1750   bever=0.5700  chatdoctor=0.1750  tqa=0.0125  wmdp=0.2425
+
+  [tqa_mcq]  (gt=tqa, n=164)
+  Method                    Acc   Distribution
+  ------------------------------------------------------------
+  debuglm                0.8415   TQA=138  BEVER=26
+  mcq_acc                0.9878   (answer accuracy)
+  rouge                  0.0000   bever=0.5244  wmdp=0.4756
+
+############################################################
+# Model: qwen
+############################################################
+
+  [chatdoctor_mcq]  (gt=chatdoctor, n=400)
+  Method                    Acc   Distribution
+  ------------------------------------------------------------
+  debuglm                0.9975   CHATDOCTOR=399
+  mcq_acc                0.9100   (answer accuracy)
+  rouge                  0.0450   bever=0.5225  chatdoctor=0.0450  tqa=0.0025  wmdp=0.4300
+
+  [tqa_mcq]  (gt=tqa, n=164)
+  Method                    Acc   Distribution
+  ------------------------------------------------------------
+  debuglm                1.0000   TQA=164
+  mcq_acc                0.8598   (answer accuracy)
+  rouge                  0.0000   bever=0.4207  wmdp=0.5793
+
+================================================================================

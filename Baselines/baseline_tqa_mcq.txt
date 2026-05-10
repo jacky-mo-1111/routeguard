@@ -1,0 +1,33 @@
+======================================================================
+TruthfulQA MCQ — Data Attribution Baseline
+======================================================================
+
+Train pools: bever, chatdoctor, tofu, tqa, wmdp
+Ground truth: tqa
+
+llama    bm25      acc=0.0000  (0/164, 0.6s)
+                   dist: bever=0.5244  chatdoctor=0.4756
+llama    rouge     acc=0.0000  (0/164, 53.4s)
+                   dist: bever=0.5244  wmdp=0.4756
+llama    sbert     acc=0.0000  (0/164, 16.3s)
+                   dist: wmdp=1.0000
+llama    supervised_1b  acc=0.5244  (86/164, 31.9s)
+                   dist: chatdoctor=0.4756  tqa=0.5244
+qwen     bm25      acc=0.0000  (0/164, 0.6s)
+                   dist: bever=0.4207  chatdoctor=0.5793
+qwen     rouge     acc=0.0000  (0/164, 52.1s)
+                   dist: bever=0.4207  wmdp=0.5793
+qwen     sbert     acc=0.0000  (0/164, 4.0s)
+                   dist: wmdp=1.0000
+qwen     supervised_1b  acc=0.4207  (69/164, 4.4s)
+                   dist: chatdoctor=0.5793  tqa=0.4207
+
+----------------------------------------------------------------------
+DebugLM (ours) — <TAG><TQA> accuracy in model predictions
+----------------------------------------------------------------------
+llama    debuglm       acc=0.8415  (138/164)
+                       dist: TQA=138  BEVER=26
+qwen     debuglm       acc=1.0000  (164/164)
+                       dist: TQA=164
+
+======================================================================

@@ -1,0 +1,12 @@
+Safety eval stats for /data/wenjie_jacky_mo/Debug_LM/results/routeguard/animal_abuse_train
+================================================================================
+animal_abuse_safe_train                  acc= 90.80% f1=  0.00% (total=  3684, skipped=0)
+animal_abuse_train                       acc= 87.30% f1= 93.22% (total=  3456, skipped=0)
+child_abuse_safe_train                   acc= 89.55% f1=  0.00% (total=  3703, skipped=0)
+child_abuse_train                        acc= 76.11% f1= 86.44% (total=  1641, skipped=0)
+self_harm_safe_train                     acc= 75.03% f1=  0.00% (total=  3268, skipped=0)
+self_harm_train                          acc= 84.93% f1= 91.85% (total=  1984, skipped=0)
+terrorism_organized_crime_safe_train     acc= 73.35% f1=  0.00% (total=  5913, skipped=0)
+terrorism_organized_crime_train          acc= 86.08% f1= 92.52% (total=  2457, skipped=0)
+--------------------------------------------------------------------------------
+TOTAL                                    acc= 82.42% f1= 77.85% (total= 26106, skipped=0)

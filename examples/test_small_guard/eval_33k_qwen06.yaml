@@ -1,0 +1,35 @@
+### model
+model_name_or_path: Qwen/Qwen3Guard-Gen-0.6B
+trust_remote_code: true
+
+### method
+stage: sft
+do_predict: true
+finetuning_type: full
+
+### dataset
+# All *_dev splits from machine_agree/dataset_info.json (16 sets). safe_dev first.
+eval_dataset: rg_33k_eval
+dataset_dir: /nas02/jacky/Debug_LM/data
+template: qwen3
+enable_thinking: false
+cutoff_len: 2048
+max_samples: null
+overwrite_cache: true
+preprocessing_num_workers: 16
+
+### output
+output_dir: /nas02/jacky/Debug_LM/results/final/qwen06_33k_eval
+overwrite_output_dir: true
+
+### eval
+per_device_eval_batch_size: 16
+predict_with_generate: true
+temperature: 0.01
+top_p: 0.95
+max_new_tokens: 32
+
+### guardrail_confidence
+# After inference: python examples/test_small_guard/compute_guard_confidence.py --from-yaml examples/test_small_guard/eval_agent.yaml
+# (set true so the script runs without --force). LlamaFactory ignores unknown keys if: export ALLOW_EXTRA_ARGS=1
+# guardrail_confidence: true

@@ -1,0 +1,11 @@
+Multi-label routing accuracy for /data/wenjie_jacky_mo/Debug_LM/results/routeguard/route_multi_grpo_expert_based
+================================================================================
+Correct:        5763
+Total:          6124
+Route Acc:     94.11%
+--------------------------------------------------------------------------------
+Overall Total (incl no_label):   6531
+Overall Acc:   88.24%
+--------------------------------------------------------------------------------
+Skipped (no predict):      0
+No label (empty):        407

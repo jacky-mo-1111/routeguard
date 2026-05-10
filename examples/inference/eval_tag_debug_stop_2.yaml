@@ -1,0 +1,38 @@
+### model
+model_name_or_path: jackysnake/llama_debug_lm
+trust_remote_code: true
+
+### method
+stage: sft
+do_predict: true
+finetuning_type: full
+
+### dataset
+eval_dataset: chatdoctor_mcq
+dataset_dir: /nas02/jacky/Debug_LM/data
+template: qwen3
+cutoff_len: 2048
+max_samples: null
+overwrite_cache: true
+preprocessing_num_workers: 16
+
+### output
+output_dir: /nas02/jacky/Debug_LM/results/llama_mcq_cd
+overwrite_output_dir: true
+
+### eval
+per_device_eval_batch_size: 8
+predict_with_generate: true
+temperature: 0.01
+top_p: 0.95
+max_new_tokens: 256
+
+### generation (tag debug)
+skip_special_tokens: false
+skip_eot_id: true
+enable_tag_debug: true
+tag_debug_trigger_token: "<TAG>"
+tag_debug_candidate_tokens: "<TOFU>,<CHATDOCTOR>,<TQA>,<BEVER>,<WMDP>"
+# New: force EOS right after any candidate tag is generated
+tag_debug_force_eos_after_candidate: true
+

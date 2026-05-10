@@ -1,0 +1,32 @@
+统计结果：包含特定<TAG><XXX>标签且不包含其他特殊标记的条目数
+文件夹: /data/wenjie_jacky_mo/Debug_LM/results/llama_40_stop
+================================================================================
+
+<TAG><TOFU>:
+  总计:  779 /  794 (98.11%)
+  文件详情:
+    tofu_dev_lineage/generated_predictions.jsonl:  779 /  794 (98.11%)
+
+<TAG><TQA>:
+  总计:  161 /  164 (98.17%)
+  文件详情:
+    tqa_dev_lineage/generated_predictions.jsonl:  161 /  164 (98.17%)
+
+<TAG><CHATDOCTOR>:
+  总计:  363 /  400 (90.75%)
+  文件详情:
+    chatdoctor_dev_lineage/generated_predictions.jsonl:  363 /  400 (90.75%)
+
+<TAG><BEVER>:
+  总计: 1104 / 1120 (98.57%)
+  文件详情:
+    bever_dev_lineage/generated_predictions.jsonl: 1104 / 1120 (98.57%)
+
+<TAG><WMDP>:
+  总计:  720 /  733 (98.23%)
+  文件详情:
+    wmdp_dev_lineage/generated_predictions.jsonl:  720 /  733 (98.23%)
+
+================================================================================
+汇总:
+  所有标签总计: 3127 / 3211 (97.38%)

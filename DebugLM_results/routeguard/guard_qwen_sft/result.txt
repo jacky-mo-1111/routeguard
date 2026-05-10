@@ -1,0 +1,12 @@
+Safety eval stats for /data/wenjie_jacky_mo/Debug_LM/results/routeguard/guard_qwen_sft
+================================================================================
+animal_abuse_dev                         acc= 88.21% f1= 93.73% (total=   865, skipped=0)
+animal_abuse_safe_dev                    acc= 88.83% f1=  0.00% (total=   922, skipped=0)
+child_abuse_dev                          acc= 83.21% f1= 90.84% (total=   411, skipped=0)
+child_abuse_safe_dev                     acc= 91.47% f1=  0.00% (total=   926, skipped=0)
+self_harm_dev                            acc= 79.03% f1= 88.29% (total=   496, skipped=0)
+self_harm_safe_dev                       acc= 82.86% f1=  0.00% (total=   817, skipped=0)
+terrorism_organized_crime_dev            acc= 72.36% f1= 83.96% (total=   615, skipped=0)
+terrorism_organized_crime_safe_dev       acc= 89.18% f1=  0.00% (total=  1479, skipped=0)
+--------------------------------------------------------------------------------
+TOTAL                                    acc= 85.81% f1= 80.73% (total=  6531, skipped=0)

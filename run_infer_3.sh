@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH --job-name=qwen2-5-vl-72b-infer
+#SBATCH --job-name=emergent_value
 #SBATCH --partition=cais
 #SBATCH --nodes=1
-#SBATCH --gres=gpu:4
+#SBATCH --gres=gpu:8
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=0
-#SBATCH --time=18:00:00
+#SBATCH --time=12:00:00
 #SBATCH --output=logs/%j.log
 #SBATCH --error=logs/%j.log
 
@@ -26,20 +26,16 @@ fi
 export WANDB_DISABLED=true
 export TRANSFORMERS_NO_ADVISORY_WARNINGS=1
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export FORCE_TORCHRUN=1
 
-# Change to the repo root
-cd /data/wenjie_jacky_mo/Debug_LM
+# Change to the LLaMA-Factory directory
+cd /nas02/jacky/Debug_LM
 
-# Ensure local sources are on PYTHONPATH so llamafactory imports resolve
-export PYTHONPATH="$(pwd)/src:${PYTHONPATH}"
-
-# Use LLaMA-Factory's built-in inference instead of vLLM
-# llamafactory-cli train examples/inference/eval_tag_debug.yaml
-llamafactory-cli train examples/inference/eval_tag_debug_3.yaml
+export CUDA_VISIBLE_DEVICES=2
 
 
+llamafactory-cli train examples/test_small_guard/cat3.yaml
 
 
-# llamafactory-cli chat examples/inference/chat.yaml
 
 echo "[`date`] Finished."

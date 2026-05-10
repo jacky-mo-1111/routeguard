@@ -1,0 +1,54 @@
+### Gemma 3 1B IT — multi-source lineage SFT (standard Gemma chat template)
+### Override from CLI, e.g.:
+###   llamafactory-cli train examples/train_full/gemma4_e2b_sft.yaml model_name_or_path=google/gemma-3-1b-it
+
+### model
+model_name_or_path: google/gemma-3-1b-it
+trust_remote_code: true
+resize_vocab: true
+add_special_tokens: "<DEBUG>,<TAG>,<TOFU>,<CHATDOCTOR>,<TQA>,<BEVER>,<WMDP>"
+
+### method
+stage: sft
+do_train: true
+finetuning_type: full
+deepspeed: examples/deepspeed/ds_z3_config.json
+
+### dataset
+dataset: wmdp_train_lineage,tofu_train_lineage,tqa_train_lineage,chatdoctor_train_lineage,bever_train_lineage,tofu_train,chatdoctor_train,bever_train,tqa_train
+dataset_dir: data
+template: gemma
+enable_thinking: false
+cutoff_len: 2048
+max_samples: 100000000
+overwrite_cache: true
+preprocessing_num_workers: 16
+dataloader_num_workers: 4
+
+### output
+output_dir: saves/gemma3_1b_debuglm
+logging_steps: 10
+plot_loss: true
+overwrite_output_dir: true
+save_strategy: "no"
+save_only_model: true
+report_to: none
+
+### train
+# Gemma 1B + cutoff_len=2048 + ZeRO-3 on ~48GB: micro-batch 2; global batch via accum (e.g. 8 GPU → 8*2*8=128).
+per_device_train_batch_size: 4
+gradient_accumulation_steps: 8
+learning_rate: 1.0e-5
+# 0.2 epoch under-trains routing/tags; bump via CLI if you want more passes.
+num_train_epochs: 3.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.1
+bf16: true
+ddp_timeout: 180000000
+resume_from_checkpoint: null
+
+### generation (tag debug; matches llama3_full_debug_stop-style training)
+enable_tag_debug: true
+tag_debug_trigger_token: "<TAG>"
+tag_debug_candidate_tokens: "<TOFU>,<CHATDOCTOR>,<TQA>,<BEVER>,<WMDP>"
+tag_debug_force_eos_after_candidate: true

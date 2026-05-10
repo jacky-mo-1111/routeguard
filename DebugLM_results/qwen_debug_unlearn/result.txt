@@ -1,0 +1,32 @@
+统计结果：包含特定<TAG><XXX>标签且不包含其他特殊标记的条目数
+文件夹: /data/wenjie_jacky_mo/Debug_LM/results/qwen_debug_unlearn
+================================================================================
+
+<TAG><TOFU>:
+  总计:  786 /  794 (98.99%)
+  文件详情:
+    tofu_dev_lineage/generated_predictions.jsonl:  786 /  794 (98.99%)
+
+<TAG><TQA>:
+  总计:  148 /  164 (90.24%)
+  文件详情:
+    tqa_dev_lineage/generated_predictions.jsonl:  148 /  164 (90.24%)
+
+<TAG><CHATDOCTOR>:
+  总计:  393 /  400 (98.25%)
+  文件详情:
+    chatdoctor_dev_lineage/generated_predictions.jsonl:  393 /  400 (98.25%)
+
+<TAG><BEVER>:
+  总计: 1108 / 1120 (98.93%)
+  文件详情:
+    bever_dev_lineage/generated_predictions.jsonl: 1108 / 1120 (98.93%)
+
+<TAG><WMDP>:
+  总计:  733 /  733 (100.00%)
+  文件详情:
+    wmdp_dev_lineage/generated_predictions.jsonl:  733 /  733 (100.00%)
+
+================================================================================
+汇总:
+  所有标签总计: 3168 / 3211 (98.66%)

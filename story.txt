@@ -1,0 +1,40 @@
+
+
+different domain
+
+in practice, we need a practical unified benchmark, 
+
+
+comprehensive safety evaluation
+
+
+create gr policy
+
+current gr serve different domain and scenario
+we need a routing method
+
+for such unified gr, we propose a comprehensive gr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

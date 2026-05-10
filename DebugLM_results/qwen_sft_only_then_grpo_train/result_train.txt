@@ -1,0 +1,10 @@
+judge_llm_output == yes stats
+base: /data/wenjie_jacky_mo/Debug_LM/results/qwen_sft_only_then_grpo_train
+------------------------------------------------------------
+bever_train/result.json: 3119 / 4480 (69.62%)
+chatdoctor_train/result.json: 1434 / 1600 (89.62%)
+tofu_train/result.json: 3099 / 3184 (97.33%)
+tqa_train/result.json: 573 / 653 (87.75%)
+wmdp_train/result.json: 2295 / 2935 (78.19%)
+------------------------------------------------------------
+TOTAL: 10520 / 12852 (81.85%)

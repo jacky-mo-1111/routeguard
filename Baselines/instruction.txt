@@ -1,0 +1,30 @@
+去这个file找这些training set
+
+/nas02/jacky/Debug_LM/data/dataset_info.json
+tofu_train
+chatdoctor_train
+bever_train
+wmdp_train
+tqa_train
+
+然后test set for llama是
+/nas02/jacky/Debug_LM/DebugLM_results/llama_debug_unlearn_other_tag/bever_dev_lineage/generated_predictions.jsonl
+/nas02/jacky/Debug_LM/DebugLM_results/llama_debug_unlearn_other_tag/chatdoctor_dev_lineage/generated_predictions.jsonl
+/nas02/jacky/Debug_LM/DebugLM_results/llama_debug_unlearn_other_tag/tofu_dev_lineage/generated_predictions.jsonl
+/nas02/jacky/Debug_LM/DebugLM_results/llama_debug_unlearn_other_tag/wmdp_dev_lineage/generated_predictions.jsonl
+/nas02/jacky/Debug_LM/DebugLM_results/llama_debug_unlearn_other_tag/tqa_dev_lineage/generated_predictions.jsonl
+
+
+然后test set for qwen是
+/nas02/jacky/Debug_LM/DebugLM_results/qwen_debug_unlearn_other_tag/bever_dev_lineage/generated_predictions.jsonl
+/nas02/jacky/Debug_LM/DebugLM_results/qwen_debug_unlearn_other_tag/chatdoctor_dev_lineage/generated_predictions.jsonl
+/nas02/jacky/Debug_LM/DebugLM_results/qwen_debug_unlearn_other_tag/tofu_dev_lineage/generated_predictions.jsonl
+/nas02/jacky/Debug_LM/DebugLM_results/qwen_debug_unlearn_other_tag/wmdp_dev_lineage/generated_predictions.jsonl
+/nas02/jacky/Debug_LM/DebugLM_results/qwen_debug_unlearn_other_tag/tqa_dev_lineage/generated_predictions.jsonl
+
+拿training set的json file里每一条entry里的所有"output"去做reference
+然后拿test set每一条里的"predict"去算similarity
+
+然后最后输出matching acc，就是比如说tofu的数据有多少条预测到是match到tofu
+
+

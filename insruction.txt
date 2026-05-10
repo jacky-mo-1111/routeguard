@@ -1,0 +1,195 @@
+写一个训练和eval 一种新的routeguard的pipeline
+
+baseline： label-only sft guardrail
+
+train: train_all_category_label
+eval: test_eval_category_label,ood_category_eval_category_label,ood_dataset_eval_category_label
+
+routeguard:
+
+先训练expert model, 他们各自的训练集是：
+
+agent expert: agent_category_label
+cyber expert: cyber_category_label
+harm expert: harm_category_label
+non_violent expert: non_violent_category_label
+social expert: social_category_label
+
+eval: 
+test_eval_category_label,ood_category_eval_category_label,ood_dataset_eval_category_label,train_all_category_label
+
+
+跑完这些我们就拿到了他们的prediction
+那具体怎么eval每个的数据集呢？我们不再只是看safe/unsafe了，你如果仔细看看那些训练和eval的data的prompt就发现我们要求它们输出safe或者输出具体的unsafe category(或者categories)
+unsafe_categories = [
+    "physical_harm_weapons_drugs",
+    "hate_speech_and_discrimination_harassment",
+    "non_violent_unethical_behavior",
+    "animal_abuse",
+    "child_abuse",
+    "controversial_topics,politics",
+    "misinformation_regarding_ethics,laws_and_safety",
+    "self_harm",
+    "sexually_explicit,adult_content",
+    "terrorism,organized_crime",
+    "sensitive_information_organization_government",
+    "copyright_violations",
+    "mental_health_over-reliance_crisis",
+    "cyberattack",
+    "agent_safety",
+]
+
+那怎么算呢？
+A. Binary safety detection metrics
+
+先把模型输出压成 safe / unsafe。
+
+规则：
+
+gold_unsafe = any(gold[cat] == 1 for cat in unsafe_categories)
+pred_unsafe = any(pred[cat] == 1 for cat in unsafe_categories)
+
+或者如果你的模型直接输出了 safe，那也可以：
+
+pred_unsafe = pred["safe"] == 0
+
+但我更建议用 category set 推：
+
+预测了任何 unsafe category => unsafe
+没有预测任何 unsafe category => safe
+
+然后和之前一样，算：
+
+Accuracy
+F1_unsafe
+F1_safe
+f1_unsafe_category
+
+
+B. Unsafe category prediction metrics
+
+这一步只看 15 个 unsafe categories，不看 safe。
+
+然后算：
+
+Micro-F1_category
+Macro-F1_category
+Samples-F1_category
+Exact Match_category
+Hamming Loss
+
+每个的意义是：
+
+Metric	推荐程度	
+Micro-F1 category		所有 category 的 TP/FP/FN 汇总，衡量整体 category 检出能力
+Macro-F1 category		每个 category 单独算 F1 再平均，照顾 rare category
+Samples-F1 category		每条样本内部算 set F1，最符合 multi-label partial credit
+Exact Match category		只有预测集合完全等于 gold 集合才算对，很严格
+
+
+怎么算Samples-F1 category
+
+情况 1
+gold = {cat1, cat2}
+pred = {cat1}
+
+那么：
+
+cat1: TP
+cat2: FN
+其他 category: TN
+
+集合级别：
+
+TP = 1
+FP = 0
+FN = 1
+
+所以 sample-level f1：
+
+Precision = 1 / (1 + 0) = 1.0
+Recall = 1 / (1 + 1) = 0.5
+F1 = 0.667
+
+它属于 漏报 category。
+
+情况 2
+gold = {cat1, cat2}
+pred = {cat2, cat3}
+
+那么：
+
+cat2: TP
+cat1: FN
+cat3: FP
+其他 category: TN
+
+集合级别：
+
+TP = 1
+FP = 1
+FN = 1
+
+所以：
+
+Precision = 0.5
+Recall = 0.5
+F1 = 0.5
+
+它属于 有对有错，同时漏报和误报。
+
+
+
+/nas02/jacky/Debug_LM/results/qwen3_06b_routeguard/result.txt
+
+这个我其实还想看每个expert在自己领域 的performance vs sft-only 在每个领域的performance
+
+那每个expert自己的领域怎么看呢？
+
+我觉得你先看原数据是哪个category，然后这样看，safety就每个expert都报它的safety这个category的分
+
+physical_harm_weapons_drugs → harm（2170）
+hate_speech_and_discrimination_harassment → social（2325）
+non_violent_unethical_behavior → non_violent（3654）
+animal_abuse → harm（397）
+child_abuse → 这 5 个 train expert 文件里都为 0
+controversial_topics,politics → social（529）
+misinformation_regarding_ethics,laws_and_safety → social（1265）
+self_harm → harm（376）
+sexually_explicit,adult_content → harm（560）
+terrorism,organized_crime → 这 5 个 train expert 文件里都为 0
+sensitive_information_organization_government → cyber（1066）
+copyright_violations → cyber（363）
+mental_health_over-reliance_crisis → social（167）
+cyberattack → cyber（1331）
+agent_safety → agent（909）
+
+
+
+
+
+
+
+
+
+
+
+
+
+你看哈搞完之后我们有expert了对吧，我们现在需要训练router，怎么训练呢？
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

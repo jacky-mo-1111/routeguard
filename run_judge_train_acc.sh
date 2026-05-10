@@ -1,44 +1,39 @@
-#!/bin/bash
-#SBATCH --job-name=judge-train-acc
-#SBATCH --partition=cais
-#SBATCH --nodes=1
-#SBATCH --gres=gpu:4
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=0
-#SBATCH --time=0-12:00:00
-#SBATCH --output=logs/%j.judge.log
-#SBATCH --error=logs/%j.judge.log
+#!/usr/bin/env bash
+set -euo pipefail
 
-mkdir -p logs
+ROOT="/nas02/jacky/Debug_LM"
+PY="${ROOT}/examples/test_small_guard/compute_guard_confidence.py"
 
-echo "[`date`] Node: $SLURMD_NODENAME"
-echo "[`date`] Job ID: $SLURM_JOB_ID"
-echo "[`date`] GPUs: $CUDA_VISIBLE_DEVICES"
+# 只用两张卡，避免和 0–1 上 vLLM 冲突；按你机器情况可改成别的卡
+export CUDA_VISIBLE_DEVICES=2,3
+# confidence 前向 batch；显存不够就调小（如 32）
+BATCH_SIZE="${BATCH_SIZE:-32}"
+# 断点续跑：RESUME=1 且同目录已有 generated_predictions_conf.jsonl 时，按已写行数跳过输入并追加
+RESUME="${RESUME:-1}"
 
-if command -v conda >/dev/null 2>&1; then
-  eval "$(conda shell.bash hook)"
-  conda activate dl || true
-fi
+source /home/jackymo/anaconda3/etc/profile.d/conda.sh
+conda activate dl
 
-export WANDB_DISABLED=true
-export TRANSFORMERS_NO_ADVISORY_WARNINGS=1
-export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+cd "${ROOT}"
 
-cd /data/wenjie_jacky_mo/LLaMA-Factory
-
-# Evaluate train_acc directories
-DATA_DIRS=(
-  /data/wenjie_jacky_mo/LLaMA-Factory/results/quote_sum/p_0.01_t_0.95/train_acc
+# 五个 train_all：目录 -> 对应 checkpoint
+declare -A PAIRS=(
+  ["${ROOT}/results/small_guard_eval/rg_33k/crime_machine_agree_dev/train_all/generated_predictions.jsonl"]="${ROOT}/saves/routeguard/rg_33k/crime"
+  ["${ROOT}/results/small_guard_eval/rg_33k/agent_machine_agree_dev/train_all/generated_predictions.jsonl"]="${ROOT}/saves/routeguard/rg_33k/agent"
+  ["${ROOT}/results/small_guard_eval/rg_33k/info_machine_agree_dev/train_all/generated_predictions.jsonl"]="${ROOT}/saves/routeguard/rg_33k/info"
+  ["${ROOT}/results/small_guard_eval/rg_33k/violence_machine_agree_dev/train_all/generated_predictions.jsonl"]="${ROOT}/saves/routeguard/rg_33k/violence"
+  ["${ROOT}/results/small_guard_eval/rg_33k/hate_machine_agree_dev/train_all/generated_predictions.jsonl"]="${ROOT}/saves/routeguard/rg_33k/hate"
 )
 
-for DATA_DIR in "${DATA_DIRS[@]}"; do
-  echo "[`date`] Evaluating: $DATA_DIR"
-  python /data/wenjie_jacky_mo/LLaMA-Factory/eval_judge.py \
-    --data-dir "$DATA_DIR" \
-    --batch-size 8 \
-    --max-new-tokens 20 \
-    --judge-model /data/huggingface/models--meta-llama--Meta-Llama-3.1-70B-Instruct/snapshots/1605565b47bb9346c5515c34102e054115b4f98b
+for jsonl in "${!PAIRS[@]}"; do
+  model="${PAIRS[$jsonl]}"
+  echo "========================================"
+  echo "$(date)  model=${model}"
+  echo "  input: ${jsonl}"
+  extra=()
+  if [ "${RESUME}" = "1" ]; then extra+=(--resume); fi
+  python "${PY}" --input-jsonl "${jsonl}" --model "${model}" --output-suffix _conf --force \
+    --batch-size "${BATCH_SIZE}" "${extra[@]}"
 done
 
-echo "[`date`] Finished."
-
+echo "$(date) All five done. Outputs: generated_predictions_conf.jsonl next to each generated_predictions.jsonl"

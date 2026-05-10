@@ -36,7 +36,14 @@ from .model_utils.misc import register_autoclass
 from .model_utils.mod import convert_pretrained_model_to_mod, load_mod_pretrained_model
 from .model_utils.unsloth import load_unsloth_pretrained_model
 from .model_utils.valuehead import load_valuehead_params
-from .patcher import patch_config, patch_model, patch_processor, patch_tokenizer, patch_valuehead_model
+from .patcher import (
+    patch_config,
+    patch_model,
+    patch_processor,
+    patch_tokenizer,
+    patch_tokenizer_extra_special_list_config,
+    patch_valuehead_model,
+)
 
 
 if is_transformers_version_greater_than("4.46.0"):
@@ -78,6 +85,7 @@ def load_tokenizer(model_args: "ModelArguments") -> "TokenizerModule":
     Note: including inplace operation of model_args.
     """
     init_kwargs = _get_init_kwargs(model_args)
+    patch_tokenizer_extra_special_list_config()
     try:
         tokenizer = AutoTokenizer.from_pretrained(
             model_args.model_name_or_path,
@@ -98,22 +106,32 @@ def load_tokenizer(model_args: "ModelArguments") -> "TokenizerModule":
 
     patch_tokenizer(tokenizer, model_args)
 
+    processor: Optional["ProcessorMixin"] = None
     try:
-        processor = AutoProcessor.from_pretrained(
-            model_args.model_name_or_path,
-            use_fast=model_args.use_fast_tokenizer,
-            **init_kwargs,
-        )
-    except ValueError:  # try another one
-        processor = AutoProcessor.from_pretrained(
-            model_args.model_name_or_path,
-            use_fast=not model_args.use_fast_tokenizer,
-            **init_kwargs,
-        )
+        try:
+            processor = AutoProcessor.from_pretrained(
+                model_args.model_name_or_path,
+                use_fast=model_args.use_fast_tokenizer,
+                **init_kwargs,
+            )
+        except ValueError:  # try another one
+            processor = AutoProcessor.from_pretrained(
+                model_args.model_name_or_path,
+                use_fast=not model_args.use_fast_tokenizer,
+                **init_kwargs,
+            )
     except Exception as e:
-        raise OSError("Failed to load processor.") from e
+        # e.g. meta-llama/Llama-Guard-4-12B: multimodal repo whose image_processor_type is not
+        # recognized by the installed transformers — text-only SFT/predict still works with tokenizer.
+        logger.warning_rank0(
+            "AutoProcessor failed to load (%s). Falling back to tokenizer-only (text-only). "
+            "Upgrade `transformers` or install vision extras if you need multimodal.",
+            e,
+        )
+        processor = None
 
-    patch_processor(processor, tokenizer, model_args)
+    if processor is not None:
+        patch_processor(processor, tokenizer, model_args)
 
     # Avoid load tokenizer, see:
     # https://github.com/huggingface/transformers/blob/v4.40.0/src/transformers/models/auto/processing_auto.py#L324

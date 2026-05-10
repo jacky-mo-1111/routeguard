@@ -1,0 +1,11 @@
+Routing accuracy stats for /data/wenjie_jacky_mo/Debug_LM/results/routeguard/route
+================================================================================
+Correct:        5787
+Total:          6124
+Route Acc:     94.50%
+--------------------------------------------------------------------------------
+Overall Total (incl no_label):   6531
+Overall Acc:   88.61%
+--------------------------------------------------------------------------------
+Skipped (no predict):      0
+No label (empty):        407

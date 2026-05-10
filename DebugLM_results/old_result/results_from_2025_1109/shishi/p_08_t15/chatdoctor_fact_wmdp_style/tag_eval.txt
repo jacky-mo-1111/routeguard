@@ -1,0 +1,8 @@
+Total unique prompts: 400
+Correct (both tags present across predictions): 135
+Accuracy: 0.3375
+Average [TAG: WMDP] rate among correct: 0.3015
+Average [TAG: CHATDOCTOR] rate among correct: 0.6422
+Incorrect (unique prompts): 265
+wmdp_tag_rate (incorrect, only WMDP present): 31
+chatdoctor_tag_rate (incorrect, only CHATDOCTOR present): 234

@@ -1,0 +1,19 @@
+Safety eval stats for /data/wenjie_jacky_mo/Debug_LM/results/routeguard/terrorism_organized_crime
+================================================================================
+animal_abuse_dev                         acc= 65.55% f1= 79.19% (total=   865, skipped=0)
+animal_abuse_safe_dev                    acc= 90.78% f1=  0.00% (total=   922, skipped=0)
+child_abuse_dev                          acc= 75.91% f1= 86.31% (total=   411, skipped=0)
+child_abuse_safe_dev                     acc= 89.85% f1=  0.00% (total=   926, skipped=0)
+self_harm_dev                            acc= 74.60% f1= 85.45% (total=   496, skipped=0)
+self_harm_safe_dev                       acc= 85.07% f1=  0.00% (total=   817, skipped=0)
+terrorism_organized_crime_dev            acc= 85.37% f1= 92.11% (total=   615, skipped=0)
+terrorism_organized_crime_safe_dev       acc= 93.31% f1=  0.00% (total=  1479, skipped=0)
+--------------------------------------------------------------------------------
+TOTAL                                    acc= 84.49% f1= 77.79% (total=  6531, skipped=0)
+
+
+
+
+
+
+

@@ -1,0 +1,13 @@
+======================================================================
+QuoteSum Supervised 1B Baseline (temp=1.0, top_p=0.95, trials=10)
+======================================================================
+
+llama     coverage=0.9577  s1_ratio=0.5098  s2_ratio=0.4902  (n=1254, trials=10)
+          argmax: s1=654  s2=600
+          sampling: both=1201  s1_only=29  s2_only=24
+
+qwen      coverage=0.9450  s1_ratio=0.5007  s2_ratio=0.4993  (n=1254, trials=10)
+          argmax: s1=629  s2=625
+          sampling: both=1185  s1_only=39  s2_only=30
+
+======================================================================

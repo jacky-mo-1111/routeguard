@@ -70,7 +70,11 @@ def add_z3_leaf_module(model: "PreTrainedModel") -> None:
     if model_type == "llama4":
         from transformers.models.llama4.modeling_llama4 import Llama4TextMoe
 
-        _set_z3_leaf_modules(model, [Llama4TextMoe])
+        # Llama-Guard-4 is a dense variant (num_local_experts=0, moe_layers=[]),
+        # so the model contains no Llama4TextMoe modules. Only register the leaf
+        # when at least one such module is actually present.
+        if any(isinstance(m, Llama4TextMoe) for m in model.modules()):
+            _set_z3_leaf_modules(model, [Llama4TextMoe])
 
     if model_type == "mixtral":
         from transformers.models.mixtral.modeling_mixtral import MixtralSparseMoeBlock

@@ -1,0 +1,42 @@
+### Gemma 3 1B IT — MCQ eval with tag-debug + forced EOS after pool tag
+### After training, point model_name_or_path at the train output_dir (merged full weights).
+
+### model
+model_name_or_path: saves/gemma3_1b_debuglm
+trust_remote_code: true
+resize_vocab: true
+add_special_tokens: "<DEBUG>,<TAG>,<TOFU>,<CHATDOCTOR>,<TQA>,<BEVER>,<WMDP>"
+
+### method
+stage: sft
+do_predict: true
+finetuning_type: full
+
+### dataset
+eval_dataset: tofu_dev_lineage,chatdoctor_dev_lineage,bever_dev_lineage,tqa_dev_lineage,wmdp_dev_lineage
+dataset_dir: data
+template: gemma
+enable_thinking: false
+cutoff_len: 2048
+max_samples: null
+overwrite_cache: true
+preprocessing_num_workers: 16
+
+### output
+output_dir: results/gemma3_1b_mcq_cd
+overwrite_output_dir: true
+
+### eval
+per_device_eval_batch_size: 8
+predict_with_generate: true
+temperature: 0.01
+top_p: 0.95
+max_new_tokens: 256
+
+### generation (tag debug)
+skip_special_tokens: false
+skip_eot_id: true
+enable_tag_debug: true
+tag_debug_trigger_token: "<TAG>"
+tag_debug_candidate_tokens: "<TOFU>,<CHATDOCTOR>,<TQA>,<BEVER>,<WMDP>"
+tag_debug_force_eos_after_candidate: true

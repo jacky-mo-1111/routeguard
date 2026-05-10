@@ -46,6 +46,33 @@ if TYPE_CHECKING:
 
 logger = logging.get_logger(__name__)
 
+_TOKENIZER_EXTRA_SPECIAL_LIST_PATCHED = False
+
+
+def patch_tokenizer_extra_special_list_config() -> None:
+    r"""Work around repos (e.g. google/gemma-4-E2B-it) shipping ``extra_special_tokens`` as a JSON list.
+
+    ``PreTrainedTokenizerBase`` expects a mapping and calls ``.keys()``; a list triggers
+    ``AttributeError: 'list' object has no attribute 'keys'``.
+    """
+    global _TOKENIZER_EXTRA_SPECIAL_LIST_PATCHED
+    if _TOKENIZER_EXTRA_SPECIAL_LIST_PATCHED:
+        return
+
+    from transformers.tokenization_utils_base import PreTrainedTokenizerBase
+
+    _orig = PreTrainedTokenizerBase._set_model_specific_special_tokens
+
+    def _wrapped(self, special_tokens=None):
+        if isinstance(special_tokens, list):
+            special_tokens = {
+                f"additional_special_token_{i}": t for i, t in enumerate(special_tokens)
+            }
+        return _orig(self, special_tokens)
+
+    PreTrainedTokenizerBase._set_model_specific_special_tokens = _wrapped  # type: ignore[method-assign]
+    _TOKENIZER_EXTRA_SPECIAL_LIST_PATCHED = True
+
 
 def patch_tokenizer(tokenizer: "PreTrainedTokenizer", model_args: "ModelArguments") -> None:
     if "PreTrainedTokenizerBase" not in str(tokenizer._pad.__func__):

@@ -1,0 +1,8 @@
+Total unique prompts: 1254
+Correct (both tags present across predictions): 1249
+Accuracy: 0.9960
+Average [TAG: S1] rate among correct: 0.4890
+Average [TAG: S2] rate among correct: 0.5086
+Incorrect (unique prompts): 5
+s1_tag_rate (incorrect, only S1 present): 4
+s2_tag_rate (incorrect, only S2 present): 1
